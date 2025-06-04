@@ -1,0 +1,50 @@
+Bootstrap: docker
+From: debian:12
+
+%arguments
+kafka_version=2.13
+
+%environment
+export LC_ALL=C
+export BROKER_PORT=${BROKER_PORT:-'9092'}
+export CONTROLLER_PORT=${CONTROLLER_PORT:-'9093'}
+
+%post
+apt -y update && apt -y install wget gpg default-jre
+mkdir -p /etc/apt/keyrings
+wget -qO - https://packages.confluent.io/deb/7.9/archive.key | gpg --dearmor | tee /etc/apt/keyrings/confluent.gpg > /dev/null
+
+CP_DIST=bookworm
+echo "Types: deb
+URIs: https://packages.confluent.io/deb/7.9
+Suites: stable
+Components: main
+Architectures: $(dpkg --print-architecture)
+Signed-by: /etc/apt/keyrings/confluent.gpg
+
+Types: deb
+URIs: https://packages.confluent.io/clients/deb/
+Suites: ${CP_DIST}
+Components: main
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/confluent.gpg" | tee /etc/apt/sources.list.d/confluent-platform.sources > /dev/null
+
+apt-get -y update && apt-get -y install confluent-community-2.13
+apt -y remove wget gpg && apt -y autoremove
+apt clean
+
+echo "export CLUSTER_ID=\"$(kafka-storage random-uuid)\"" >> $APPTAINER_ENVIRONMENT
+
+%labels
+Version 1.0
+
+%startscript
+cat /etc/kafka/kraft/server.properties | sed "s/:9092/:${BROKER_PORT}/g" | sed "s/:9093/:${CONTROLLER_PORT}/g" > server.properties
+kafka-storage format -t ${CLUSTER_ID} -c server.properties
+kafka-server-start server.properties
+
+%runscript
+cat /etc/kafka/kraft/server.properties | sed "s/:9092/:${BROKER_PORT}/g" | sed "s/:9093/:${CONTROLLER_PORT}/g" > server.properties
+kafka-storage format -t ${CLUSTER_ID} -c server.properties
+kafka-server-start server.properties
+

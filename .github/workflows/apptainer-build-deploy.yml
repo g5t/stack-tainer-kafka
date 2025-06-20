@@ -33,6 +33,6 @@ jobs:
         with:
           deffile: image.def
           image-version: ${{ env.IMAGE_VERSION }}
-          image-url: "oras://ghcr.io/g5t/splitrun/kafka:${{ env.IMAGE_VERSION }}"
+          image-url: "oras://ghcr.io/g5t/stacktainer/kafka:${{ env.IMAGE_VERSION }}"
 
           

@@ -18,9 +18,6 @@ jobs:
       - name: Install Apptainer
         uses: uw-psych/apptainer-actions/setup@main
       
-      - name: Clear disk space
-        uses: uw-psych/apptainer-actions/make-disk-space@main
-
       - name: Check out
         uses: actions/checkout@v4
 
@@ -31,7 +28,11 @@ jobs:
 
       - name: Build and push image
         uses: uw-psych/apptainer-actions/build-and-push@main
+        env:
+          GITHUB_TOKEN: ${{ PACKAGE_TOKEN }}
         with:
           deffile: image.def
           image-version: ${{ env.IMAGE_VERSION }}
+          image-url: "oras://ghcr.io/g5t/splitrun/kafka:${{ env.IMAGE_VERSION }}"
+
           

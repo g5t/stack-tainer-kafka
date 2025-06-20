@@ -1,4 +1,4 @@
-# stack-tainer-kafka
+# stacktainer-kafka
 
 # Build
 
@@ -6,7 +6,7 @@ Use the Confluent Kafka Debian packages to build an Apptainer image which will l
 server listening on `localhost:9092` with suitable defaults.
 
 ```cmd
-apptainer build stack-tainer-kafka.sif image.def
+apptainer build stacktainer-kafka.sif image.def
 ```
 
 # Run
@@ -15,11 +15,11 @@ or in a detached thread via `instance run` in which case no output is visible an
 be managed through `apptainer instance`
 
 ```cmd
-apptainer run --writable-tmpfs stack-tainer-kafka.sif 
+apptainer run --writable-tmpfs stacktainer-kafka.sif 
 ```
 
 ```cmd
-apptainer instance run --writable-tmpfs stack-tainer-kafka.sif 
+apptainer instance run --writable-tmpfs stacktainer-kafka.sif 
 ```
 
 Note that in either case a writable temporary filesystem overlay is needed to allow the server to write
@@ -33,5 +33,5 @@ To support running on user-specified ports, the image uses two environment varia
 `BROKER_PORT=9092` and `CONTROLLER_PORT=9093`, and that can be overridden in the launch, e.g.,
 
 ```cmd
-apptainer run --env BROKER_PORT=19092 --env CONTROLLER_PORT=19093 --writable-tmpfs stack-tainer-kafka.sif
+apptainer run --env BROKER_PORT=19092 --env CONTROLLER_PORT=19093 --writable-tmpfs stacktainer-kafka.sif
 ```
